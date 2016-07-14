@@ -58,8 +58,8 @@ angular.module('myApp.bms', ['ionic'])
     var cloudant_bms_guid = "503a965b-5ba8-4a3d-b7e7-403375548369";
     // Global vars used for debugging and keeping track of which functions are being called
     var funct = "";
-    //var testFile = new Image();
-    var testFile = new Audio();
+    var testFile = new Image();
+    //var testFile = new Audio();
     // Android Client ID: 853130241725-mtljp8gct4pqtjvvrdt1kl9e8t90vho3.apps.googleusercontent.com
 
     $scope.recordings = Recordings.all();
@@ -175,8 +175,8 @@ angular.module('myApp.bms', ['ionic'])
         var cloudant_DocID = "f26d6fc4783784738f6a715081dc4ce6";
         var cloudant_DocRev = "";               // Will be updated by pinging the server below
         var queryRev = "";
-        var cloudant_Attachment = Date.now() + ".wav";   // Ensures that each file name will be unique
-        var cloudant_MIMEtype = "audio/wav";
+        var cloudant_Attachment = Date.now() + ".jpg";   // Ensures that each file name will be unique
+        var cloudant_MIMEtype = "image/jpg"; //audio/wav";
         var senderURL =     "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID + "/" + cloudant_Attachment;
         var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
         
@@ -201,16 +201,16 @@ angular.module('myApp.bms', ['ionic'])
         setTimeout(
             function() {    // This function won't execute until the time below expires (gives the server time to respond)
                 var sender = new MFPRequest(senderURL + queryRev, MFPRequest.PUT);
-                //var headers = {"Content-Type": cloudant_MIMEtype};
-                var form = new FormData();
-	            form.append("file", testFile.src);
-                var payload = form;
+                var headers = {"Content-Type": cloudant_MIMEtype};
+                var payload = testFile.src;
+                
                 /*
                     api/favorites/attach
                 ?   id=     ba50efc1748fc3fe77c89675e163c599
                 &   name=   aa
                 &   value=  dsdccd
                 */
+
                 sender.setHeaders(headers);
                 sender.send(
                     payload,
@@ -223,34 +223,19 @@ angular.module('myApp.bms', ['ionic'])
             },
             (700)   // Pause for 700 milliseconds to allow the server to send back the newest revision number
         );
-
-/*
-        payload = {
-            "_id":  "f26d6fc4783784738f6a715081dc4ce6",
-            "_rev": "1-967a00dff5e02add41819138abb3284d",
-            "value":{
-                "rev":  "1-967a00dff5e02add41819138abb3284d"
-            },
-            "key":  "f26d6fc4783784738f6a715081dc4ce6",
-            "attachment": ""
-        };
-*/
-
-
-
     };
 
     $scope.debugger = function(){
         var f = document.getElementById('upload_file').files[0], r = new FileReader(); // Initializes a FileReader
         var preview = document.querySelector('#preview');
         
-        r.readAsDataURL(f);         // Uses the FileReader initialized above to actually read in the file
+        r.readAsBinaryString(f);         // Uses the FileReader initialized above to actually read in the file
         r.addEventListener( "load", // Once the file has been read, do the following:
                             function () {
-                                //testFile.height = 200; // only for images
-                                testFile.type = cloudant_MIMEtype; // only for audio
+                                testFile.height = 300; // only for images
+                                //testFile.type = cloudant_MIMEtype; // only for audio
                                 testFile.src = this.result;
-                                preview.appendChild(testFile);
+                                //preview.appendChild(testFile);
                             },
                             false); // useCapture. A boolean that essentially assigns priority. FALSE is fine for our case.
     };
