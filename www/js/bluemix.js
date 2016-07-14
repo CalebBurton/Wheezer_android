@@ -205,13 +205,15 @@ angular.module('myApp.bms', ['ionic'])
                 var form = new FormData();
 	            form.append("file", testFile.src);
                 var payload = form;
+                
                 /*
                     api/favorites/attach
                 ?   id=     ba50efc1748fc3fe77c89675e163c599
                 &   name=   aa
                 &   value=  dsdccd
                 */
-                sender.setHeaders(headers);
+
+                //sender.setHeaders(headers);
                 sender.send(
                     payload,
                     function(successMsg) {
