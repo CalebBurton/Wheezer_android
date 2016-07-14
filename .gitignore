@@ -88,3 +88,10 @@ captures/
 
 # Keystore files
 *.jks
+
+
+# Misc. Cordova junk
+*.lock
+*.bin
+bower_components/
+platforms/
