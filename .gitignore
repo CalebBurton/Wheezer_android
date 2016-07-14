@@ -95,3 +95,7 @@ captures/
 *.bin
 bower_components/
 platforms/
+
+*.lock
+
+*.bin
