@@ -1,0 +1,242 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "res/xml/config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"BluetoothLePlugin\"><param name=\"android-package\" value=\"com.randdusing.bluetoothle.BluetoothLePlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Notification\"><param name=\"android-package\" value=\"org.apache.cordova.dialogs.Notification\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Vibration\"><param name=\"android-package\" value=\"org.apache.cordova.vibration.Vibration\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"BMSClient\"><param name=\"android-package\" value=\"com.ibm.mobilefirstplatform.clientsdk.cordovaplugins.core.CDVBMSClient\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"MFPRequest\"><param name=\"android-package\" value=\"com.ibm.mobilefirstplatform.clientsdk.cordovaplugins.core.CDVMFPRequest\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"MFPLogger\"><param name=\"android-package\" value=\"com.ibm.mobilefirstplatform.clientsdk.cordovaplugins.core.CDVMFPLogger\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"MFPAnalytics\"><param name=\"android-package\" value=\"com.ibm.mobilefirstplatform.clientsdk.cordovaplugins.core.CDVMFPAnalytics\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"MFPAuthorizationManager\"><param name=\"android-package\" value=\"com.ibm.mobilefirstplatform.clientsdk.cordovaplugins.core.CDVMFPAuthorizationManager\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"MFPAuthenticationContext\"><param name=\"android-package\" value=\"com.ibm.mobilefirstplatform.clientsdk.cordovaplugins.core.CDVMFPAuthenticationContext\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"SplashScreen\"><param name=\"android-package\" value=\"org.apache.cordova.splashscreen.SplashScreen\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"GooglePlus\"><param name=\"android-package\" value=\"nl.xservices.plugins.GooglePlus\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<access origin=\"https://accounts.google.com/*\" />",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "AndroidManifest.xml": {
+                "parents": {
+                    "/manifest": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.VIBRATE\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.INTERNET\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.USE_CREDENTIALS\" />",
+                            "count": 1
+                        }
+                    ],
+                    "/manifest/application": [
+                        {
+                            "xml": "<receiver android:name=\"cordova.plugins.Diagnostic$LocationProviderChangedReceiver\"><intent-filter><action android:name=\"android.location.PROVIDERS_CHANGED\" /></intent-filter></receiver>",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"Diagnostic\"><param name=\"android-package\" value=\"cordova.plugins.Diagnostic\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "cordova-plugin-bluetoothle": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-vibration": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova.plugins.diagnostic": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "ibm-mfp-core": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-googleplus": {
+            "PACKAGE_NAME": "io.cordova.hellocordova"
+        }
+    },
+    "dependent_plugins": {},
+    "modules": [
+        {
+            "file": "plugins/cordova-plugin-bluetoothle/www/bluetoothle.js",
+            "id": "cordova-plugin-bluetoothle.BluetoothLe",
+            "clobbers": [
+                "window.bluetoothle"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-dialogs/www/notification.js",
+            "id": "cordova-plugin-dialogs.notification",
+            "merges": [
+                "navigator.notification"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-dialogs/www/android/notification.js",
+            "id": "cordova-plugin-dialogs.notification_android",
+            "merges": [
+                "navigator.notification"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-vibration/www/vibration.js",
+            "id": "cordova-plugin-vibration.notification",
+            "merges": [
+                "navigator.notification",
+                "navigator"
+            ]
+        },
+        {
+            "file": "plugins/cordova.plugins.diagnostic/www/android/diagnostic.js",
+            "id": "cordova.plugins.diagnostic.Diagnostic",
+            "clobbers": [
+                "cordova.plugins.diagnostic"
+            ]
+        },
+        {
+            "file": "plugins/ibm-mfp-core/www/BMSClient.js",
+            "id": "ibm-mfp-core.BMSClient",
+            "clobbers": [
+                "BMSClient"
+            ]
+        },
+        {
+            "file": "plugins/ibm-mfp-core/www/MFPRequest.js",
+            "id": "ibm-mfp-core.MFPRequest",
+            "clobbers": [
+                "MFPRequest"
+            ]
+        },
+        {
+            "file": "plugins/ibm-mfp-core/www/MFPLogger.js",
+            "id": "ibm-mfp-core.MFPLogger",
+            "clobbers": [
+                "MFPLogger"
+            ]
+        },
+        {
+            "file": "plugins/ibm-mfp-core/www/MFPAnalytics.js",
+            "id": "ibm-mfp-core.MFPAnalytics",
+            "clobbers": [
+                "MFPAnalytics"
+            ]
+        },
+        {
+            "file": "plugins/ibm-mfp-core/www/MFPAuthorizationManager.js",
+            "id": "ibm-mfp-core.MFPAuthorizationManager",
+            "clobbers": [
+                "MFPAuthorizationManager"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-splashscreen/www/splashscreen.js",
+            "id": "cordova-plugin-splashscreen.SplashScreen",
+            "clobbers": [
+                "navigator.splashscreen"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-googleplus/www/GooglePlus.js",
+            "id": "cordova-plugin-googleplus.GooglePlus",
+            "clobbers": [
+                "window.plugins.googleplus"
+            ]
+        }
+    ],
+    "plugin_metadata": {
+        "cordova-plugin-bluetoothle": "4.0.0",
+        "cordova-plugin-dialogs": "1.2.1",
+        "cordova-plugin-vibration": "2.1.1",
+        "cordova-plugin-whitelist": "1.2.2",
+        "cordova.plugins.diagnostic": "3.1.0",
+        "ibm-mfp-core": "1.0.11",
+        "cordova-plugin-splashscreen": "3.2.2",
+        "cordova-plugin-googleplus": "4.0.9"
+    }
+}

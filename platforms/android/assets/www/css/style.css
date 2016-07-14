@@ -1,0 +1,25 @@
+.wheezeBox {
+	width: 60%;
+	height: 40%;
+	margin-right: auto;
+	margin-left: auto;
+
+	align-content: center;
+	display: flex;
+	justify-content: center; /* align horizontal */
+	align-items: center; /* align vertical */
+
+	color: white;
+}
+
+
+.wheezeBox.bad {
+	background-color: red;
+	font-size: 14pt;
+	font-weight: bold;
+}
+
+.wheezeBox.good {
+	background-color: green;
+	font-size: 10pt;
+}

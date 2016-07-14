@@ -1,0 +1,75 @@
+{
+    "cordova-plugin-whitelist": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-whitelist@1"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-vibration": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-vibration"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-dialogs": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-dialogs"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "phonegap-plugin-push": {
+        "source": {
+            "type": "registry",
+            "id": "phonegap-plugin-push"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova.plugins.diagnostic": {
+        "source": {
+            "type": "registry",
+            "id": "cordova.plugins.diagnostic"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-bluetoothle": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-bluetoothle"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "ibm-mfp-core": {
+        "source": {
+            "type": "registry",
+            "id": "ibm-mfp-core"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-splashscreen": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-splashscreen"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-googleplus": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/EddyVerbruggen/cordova-plugin-googleplus",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    }
+}
