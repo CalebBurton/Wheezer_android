@@ -40,7 +40,7 @@ angular.module('myApp.bms', ['ionic'])
     newRecording: function(recordingName) {
       var currentTime = Date.now();
       return {
-        title: recordingName + ".wav",
+        title: recordingName,
         created: currentTime,
         audioData: ""
       };
@@ -137,7 +137,7 @@ angular.module('myApp.bms', ['ionic'])
         var payload = {
             "text": text_value,
             "isDone": false,
-            "audio": now
+            "audio": ""
         };
 
         request.send(payload, function(){}, $scope.bms_failure);
@@ -175,7 +175,7 @@ angular.module('myApp.bms', ['ionic'])
         var cloudant_DocID = "f26d6fc4783784738f6a715081dc4ce6";
         var cloudant_DocRev = "";               // Will be updated by pinging the server below
         var queryRev = "";
-        var cloudant_Attachment = Date.now();   // Ensures that each file name will be unique
+        var cloudant_Attachment = Date.now() + ".wav";   // Ensures that each file name will be unique
         var cloudant_MIMEtype = "audio/wav";
         var senderURL =     "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID + "/" + cloudant_Attachment;
         var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
