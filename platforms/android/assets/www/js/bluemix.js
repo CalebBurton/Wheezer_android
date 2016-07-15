@@ -172,11 +172,11 @@ angular.module('myApp.bms', ['ionic'])
 
         var cloudant_Username = "812cf44b-c59b-4288-a505-ad7e6b1b2f55-bluemix";
         var cloudant_Database = "my_sample_db";
-        var cloudant_DocID = "f26d6fc4783784738f6a715081dc4ce6";
+        var cloudant_DocID = "9824ffba8c5837b1272a1fb08c96dec3";
         var cloudant_DocRev = "";               // Will be updated by pinging the server below
         var queryRev = "";
-        var cloudant_Attachment = Date.now() + ".jpg";   // Ensures that each file name will be unique
-        var cloudant_MIMEtype = "image/jpg"; //audio/wav";
+        var cloudant_Attachment = "testFile.png"; //Date.now() + ".jpg";   // Ensures that each file name will be unique
+        var cloudant_MIMEtype = "image/png"; //audio/wav";
         var senderURL =     "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID + "/" + cloudant_Attachment;
         var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
         
@@ -187,7 +187,6 @@ angular.module('myApp.bms', ['ionic'])
         var queryParams = queryID + queryName + queryValue;
             alert("Query: " + queryParams);
         */
-        
 
         var requester = new MFPRequest(requesterURL, MFPRequest.GET);   // Ping the server to get the current database revision
         requester.send(
@@ -200,16 +199,26 @@ angular.module('myApp.bms', ['ionic'])
         
         setTimeout(
             function() {    // This function won't execute until the time below expires (gives the server time to respond)
+/*
+                var form = new FormData();
+	            form.append("file", testFile.src);
+                senderURL += queryRev; //"api/favorites" + "/attach?" + queryParams;
+                var xhr = new XMLHttpRequest();
+                xhr.open("PUT", senderURL, true);
+                //xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function(){
+                    if(xhr.readyState == 4){
+                        alert("Server responded.\n\nStatus: " + xhr.status + "\n\nResponse: " + xhr.responseText);
+                    }
+                };
+                //xhr.timeout = 1000000;
+                //xhr.ontimeout = alert("Request timed out");
+                xhr.send(form);
+*/
+               
                 var sender = new MFPRequest(senderURL + queryRev, MFPRequest.PUT);
                 var headers = {"Content-Type": cloudant_MIMEtype};
                 var payload = testFile.src;
-                
-                /*
-                    api/favorites/attach
-                ?   id=     ba50efc1748fc3fe77c89675e163c599
-                &   name=   aa
-                &   value=  dsdccd
-                */
 
                 sender.setHeaders(headers);
                 sender.send(
@@ -229,15 +238,42 @@ angular.module('myApp.bms', ['ionic'])
         var f = document.getElementById('upload_file').files[0], r = new FileReader(); // Initializes a FileReader
         var preview = document.querySelector('#preview');
         
-        r.readAsBinaryString(f);         // Uses the FileReader initialized above to actually read in the file
+        r.readAsDataURL(f);         // Uses the FileReader initialized above to actually read in the file
         r.addEventListener( "load", // Once the file has been read, do the following:
                             function () {
-                                testFile.height = 300; // only for images
+                                testFile.height = 400; // only for images
                                 //testFile.type = cloudant_MIMEtype; // only for audio
                                 testFile.src = this.result;
-                                //preview.appendChild(testFile);
+                                preview.appendChild(testFile);
                             },
                             false); // useCapture. A boolean that essentially assigns priority. FALSE is fine for our case.
+    };
+
+    $scope.downloader = function() {
+        funct = "DOWNLOADER";
+        BMSClient.initialize(cloudant_bms_route, cloudant_bms_guid);
+        var cloudant_Username = "812cf44b-c59b-4288-a505-ad7e6b1b2f55-bluemix";
+        var cloudant_Database = "my_sample_db";
+        var cloudant_DocID = "9824ffba8c5837b1272a1fb08c96dec3";
+        var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/"
+                                + cloudant_Database + "/" + cloudant_DocID
+                                    + "/" + "testFile.png";
+        
+        var preview = document.querySelector('#preview');
+        //requesterURL = "http://ccb-cloudant.mybluemix.net/api/favorites/attach?id=9824ffba8c5837b1272a1fb08c96dec3&key=testFile.png";
+        var requester = new MFPRequest(requesterURL, MFPRequest.GET);   // Ping the server to get the current database revision
+        requester.send(
+            function(successMsg) {  // Save the current revision so we can upload an attachment
+                var response64 = successMsg.responseText;
+                testFile.src = response64;
+                testFile.height = 300;
+                preview.appendChild(testFile);
+                alert("success?");
+                //var responseDecoded = Base64.decode(response64);
+                //alert("Response: " + successMsg.responseText); // NOTE: "_rev" WITH an underscore, unlike the response
+            },
+            $scope.bms_failure
+        );
     };
 })
 
@@ -254,6 +290,10 @@ Cloudant Document Conflict Resolution
 
 Cloudant Attachments
     https://docs.cloudant.com/attachments.html
+
+XML HTTP Requests
+    XMLHttpRequest objects: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#send()
+    FormData objects: https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
 
 FileReader object
     readAsDataURL: https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL 
