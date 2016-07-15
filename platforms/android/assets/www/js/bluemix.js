@@ -59,17 +59,17 @@ angular.module('myApp.bms', ['ionic'])
 
     // Global vars used for debugging and keeping track of which functions are being called
     var funct = "";
-    var audioFile;
     // Android Client ID: 853130241725-mtljp8gct4pqtjvvrdt1kl9e8t90vho3.apps.googleusercontent.com
 
     var cloudant_Username = "812cf44b-c59b-4288-a505-ad7e6b1b2f55-bluemix";
     var cloudant_Database = "my_sample_db";                                 // Will be the same accross all patients
     var cloudant_DocID = "9824ffba8c5837b1272a1fb08c96dec3";                // Will be unique to each patient
     var cloudant_DocRev = "";                                               // Will be updated by pinging the server below
-    var cloudant_Attachment = Date.now() + ".wav";                          // Named by time. Ensures that each file name will be unique
+    var cloudant_Attachment = "pirate.wav"//Date.now() + ".wav";                          // Named by time. Ensures that each file name will be unique
     var cloudant_MIMEtype = "audio/wav"; //"image/jpg";
     var preview = document.querySelector('#preview');                       // Grabs a <div> element. We'll modify it later to give a preview
-    
+    var audioFile;
+
     var senderURL =     "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID + "/" + cloudant_Attachment;
     var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
 
@@ -167,12 +167,12 @@ angular.module('myApp.bms', ['ionic'])
             createRecording(recordingName);
         }
         */
-
         funct = "CLOUDANT_UPLOAD";
 
         var requester = new MFPRequest(requesterURL, MFPRequest.GET);   // Ping the server to get the current database revision
         requester.send(
             function(successMsg) {  // Save the current revision so we can upload an attachment
+                alert("File uploaded successfully");
                 cloudant_DocRev = JSON.parse(successMsg.responseText)._rev; // NOTE: "_rev" WITH an underscore, unlike the responseText
             },
             $scope.bms_failure
@@ -220,12 +220,11 @@ angular.module('myApp.bms', ['ionic'])
         funct = "DOWNLOADER";
         var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/"
                             + cloudant_Database + "/" + cloudant_DocID
-                            + "/" + "1468615697328.wav";
+                            + "/" + "pirate.wav";
 
         var requester = new MFPRequest(requesterURL, MFPRequest.GET);   // Ping the server to get the current database revision
         requester.send(
             function(successMsg) {  // Save the current revision so we can upload an attachment
-                alert("Ping received");
                 audioFile = successMsg.responseText;
                 preview.innerHTML =
                     "<audio controls>" +
@@ -252,10 +251,6 @@ Cloudant Document Conflict Resolution
 
 Cloudant Attachments
     https://docs.cloudant.com/attachments.html
-
-XML HTTP Requests
-    XMLHttpRequest objects: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#send()
-    FormData objects: https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
 
 FileReader object
     readAsDataURL: https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL 
