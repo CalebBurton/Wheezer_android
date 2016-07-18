@@ -49,7 +49,6 @@ angular.module('myApp.bms', ['ionic'])
     var xmlValue = "doc2description";
 
     var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
-    //var senderURL = requesterURL + "/" + cloudant_Attachment;
     var senderURL = "http://" + xmlAppName + ".mybluemix.net/api/"
                         + xmlAPILoc
                         + "?id=" + cloudant_DocID
@@ -88,10 +87,9 @@ angular.module('myApp.bms', ['ionic'])
         xhr.open("POST", senderURL, true);
         xhr.send(payload);
         preview.innerHTML = loadingGif;
-
-        xhr.upload.addEventListener('onprogress',
-                                    function(e){loader.innerHTML = "<br /><p>Uploading " + e.loaded + " out of " + e.total;},
-                                    true);
+        var pct = 0;
+        var elem = document.getElementById("myBar"); 
+        xhr.upload.addEventListener("progress", function(e) {elem.style.width = pct + '%'; pct = Math.round(e.loaded / e.total);}, true);
 
 	    xhr.onreadystatechange = function(){
             if(xhr.readyState == 4){
@@ -103,34 +101,10 @@ angular.module('myApp.bms', ['ionic'])
                 loader.innerHTML = "";
                 preview.innerHTML = "";
             }
+            alert(pct);
         };
 
     };
-
-
-/*      // Using an MFPRequest to upload directly to the database. Using the API seems to be better.
-
-        var requester = new MFPRequest(requesterURL, MFPRequest.GET);   // Ping the server to get the current database revision
-        requester.send(
-            function(successMsg) {  // Current revision has been retrieved
-                cloudant_DocRev = JSON.parse(successMsg.responseText)._rev; // NOTE: "_rev" WITH an underscore, unlike the responseText
-                var sender = new MFPRequest(senderURL + "?rev=" + cloudant_DocRev, MFPRequest.PUT);
-                var headers = {"Content-type": cloudant_MIMEtype};
-                sender.setHeaders(headers);
-                var payload = audioURL;
-                sender.send(
-                    payload,
-                    function(successMsg) {
-                        alert("File " + angular.toUpperCase(cloudant_Attachment) + " uploaded successfully.");
-                        cloudant_DocRev = JSON.parse(successMsg.responseText).rev;  // NOTE: "rev" WITHOUT an underscore
-                    },
-                    $scope.bms_failure
-                );
-            },
-            $scope.bms_failure
-        );
-    };
-*/
 
 
     $scope.displayer = function(){
@@ -154,36 +128,22 @@ angular.module('myApp.bms', ['ionic'])
 
         var xhr = new XMLHttpRequest();
 	    xhr.open("GET", requesterURL, true);
-	    xhr.onreadystatechange = function(){
-            if(xhr.readyState == 4){
-                if(xhr.status == 200){
-                    alert("Response:\n" + xhr.responseBody)
-                    var a = new FileReader();
-                    a.readAsDataURL(xhr.response);
-                    a.onload = function(e) {
-                        audioURL = e.target.result;
-                        preview.innerHTML = audioPreview(audioURL, cloudant_MIMEtype);
-                        alert("URL Displayed");
-                    }
-                }else{
-                    alert("ERROR:\n" + xhr.responseText);
-                }
+	    xhr.onload = function(e){
+            var arraybuffer = xhr.response;
+        }
+        xhr.responseType = "blob";
+        xhr.send();
+        xhr.onreadystatechange = function(){
+            if((xhr.readyState == 4) && (xhr.status == 200)){
+                    document.getElementById('upload_file').files[0] = xhr.response;
+                    $scope.displayer();
+            }
+            else{
+                alert("ERROR:\n" + xhr.responseText);
             }
 	    };
-	    xhr.send();
-/*
-        var requester = new MFPRequest(requesterURL, MFPRequest.GET);
-        requester.send(
-            function(successMsg) {
-                audioURL = successMsg.responseText;
-                preview.innerHTML = audioPreview(audioURL, cloudant_MIMEtype);
-                alert("Success");
-            },
-            $scope.bms_failure
-        );
-*/
     };
-
+	    
 /*
     $scope.dataURLtoBlob = function(dataurl) {
         var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -233,6 +193,12 @@ addEventListener
 
 */
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -298,4 +264,34 @@ addEventListener
     };
 
 
+*/
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/*      // This uses an MFPRequest to upload directly to the database. Using the API seems to be better.
+
+        var requester = new MFPRequest(requesterURL, MFPRequest.GET);   // Ping the server to get the current database revision
+        requester.send(
+            function(successMsg) {  // Current revision has been retrieved
+                cloudant_DocRev = JSON.parse(successMsg.responseText)._rev; // NOTE: "_rev" WITH an underscore, unlike the responseText
+                var sender = new MFPRequest(senderURL + "?rev=" + cloudant_DocRev, MFPRequest.PUT);
+                var headers = {"Content-type": cloudant_MIMEtype};
+                sender.setHeaders(headers);
+                var payload = audioURL;
+                sender.send(
+                    payload,
+                    function(successMsg) {
+                        alert("File " + angular.toUpperCase(cloudant_Attachment) + " uploaded successfully.");
+                        cloudant_DocRev = JSON.parse(successMsg.responseText).rev;  // NOTE: "rev" WITHOUT an underscore
+                    },
+                    $scope.bms_failure
+                );
+            },
+            $scope.bms_failure
+        );
+    };
 */
