@@ -31,7 +31,7 @@
           <button class="button button-icon" ng-click="togglePatients()">
             <i class="icon ion-navicon"></i>
           </button>
-          <h1 class="title">{{activePatient.title}}</h1>
+          <h1 class="title">Patient: {{activePatient.title}}</h1>
           <!-- New Task button-->
 <!--
           <button class="button button-icon" ng-click="newTask()">
@@ -80,6 +80,7 @@
               <input type="file" name="file" id="upload_file">
               <br /><br />
               <button id="btn-ping" class="btn btn-lg" ng-click="cloudant_upload()">Upload to server</button>
+              <div id="loader"></div>
               <br /><br />
               <button id="btn-upload" class="btn btn-lg" ng-click="displayer()">View uploaded file</button>
               <br /><br />
