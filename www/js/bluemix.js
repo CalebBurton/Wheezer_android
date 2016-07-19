@@ -37,6 +37,7 @@ angular.module('myApp.bms', ['ionic'])
     var cloudant_Attachment = "Date.now()" + ".wav";                    // Named by time. Ensures that each file name will be unique
     var cloudant_MIMEtype = "audio/wav";
     var preview = document.querySelector('#preview');                   // Grabs a <div> element. We'll modify it later to give a preview
+    var loader = document.querySelector('#loader');
     var loadingGif = "<img src=\"img/loadingGif.gif\" height=100>";
 
     var xmlAppName = "ccb-cloudant";
@@ -80,7 +81,7 @@ angular.module('myApp.bms', ['ionic'])
         form.append("file", audioFile);
         var payload = form;
 
-        preview.innerHTML = loadingGif;
+        loader.innerHTML = loadingGif;
 
         var xhr = new XMLHttpRequest();
         xhr.open("POST", senderURL);
@@ -89,7 +90,7 @@ angular.module('myApp.bms', ['ionic'])
 	    xhr.onreadystatechange = function(){
             if(xhr.readyState == 4){
                 if(xhr.status == 200){
-                    preview.innerHTML = "";
+                    loader.innerHTML = "";
                     alert("File uploaded successfully.");
                 }else{
                     alert("ERROR:\n" + xhr.responseText);
@@ -99,8 +100,8 @@ angular.module('myApp.bms', ['ionic'])
     };
 
 
-    $scope.displayer = function(){
-        var f = document.getElementById('upload_file').files[0] // Gives a convenient way to reference the file we uploaded
+    $scope.displayer = function(num){
+        var f = document.getElementById('upload_file').files[num] // Gives a convenient way to reference the file we uploaded
         var r = new FileReader();                               // Initializes a FileReader
         r.readAsDataURL(f);                                     // Uses the FilReader to actually read in the file
         r.addEventListener( "load",                             // Once the file has been read, begin the following:
@@ -117,20 +118,19 @@ angular.module('myApp.bms', ['ionic'])
                                 + xmlAPILoc
                                 + "?id=" + cloudant_DocID
                                 + "&key=" + "baseball_hit_orbitz.wav"
-        
-        preview.innerHTML = loadingGif;
+        loader.innerHTML = loadingGif;
         var xhr = new XMLHttpRequest();
 	    xhr.open("GET", requesterURL, true);
-	    xhr.onload = function(e){
-            var arraybuffer = xhr.response;
-        }
         xhr.responseType = "blob";
         xhr.send();
         xhr.onreadystatechange = function(){
             if((xhr.readyState == 4) && (xhr.status == 200)){
-                    preview.innerHTML = "";
-                    document.getElementById('upload_file').files[0] = xhr.response;
-                    $scope.displayer();
+                    loader.innerHTML = "";
+                    var fileCache = document.getElementById('upload_file');
+                    var num = 0;
+                    if (fileCache.files[0] != null){num = 1;}
+                    fileCache.files[num] = xhr.response;
+                    $scope.displayer(num);
             }
             else{
                 alert("ERROR:\n" + xhr.responseText);

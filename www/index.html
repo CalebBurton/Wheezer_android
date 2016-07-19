@@ -81,12 +81,13 @@
               <br /><br />
               <button id="btn-ping" class="btn btn-lg" ng-click="cloudant_upload()">Upload to server</button>
               <br /><br />
-              <button id="btn-upload" class="btn btn-lg" ng-click="displayer()">View uploaded file</button>
+              <button id="btn-upload" class="btn btn-lg" ng-click="displayer(0)">View uploaded file</button>
               <br /><br />
               <button id="btn-download" class="btn btn-lg" ng-click="downloader()">Ping server for current attachments</button>
               <br /><br />
-              <div id="preview">
-              </div>
+              <div id="loader"></div>
+              <br />
+              <div id="preview"></div>
             </div>
         <!-----------------------------------
         ---- END OF BLUEMIX CONTROLLER ------
