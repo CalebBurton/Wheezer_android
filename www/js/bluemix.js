@@ -37,10 +37,7 @@ angular.module('myApp.bms', ['ionic'])
     var cloudant_Attachment = "Date.now()" + ".wav";                    // Named by time. Ensures that each file name will be unique
     var cloudant_MIMEtype = "audio/wav";
     var preview = document.querySelector('#preview');                   // Grabs a <div> element. We'll modify it later to give a preview
-    var loader = document.querySelector('#loader');
     var loadingGif = "<img src=\"img/loadingGif.gif\" height=100>";
-    var audioURL;
-    var audioBlob;
 
     var xmlAppName = "ccb-cloudant";
     var xmlAPILoc = "favorites/attach";
@@ -51,7 +48,7 @@ angular.module('myApp.bms', ['ionic'])
     var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
     var senderURL = "http://" + xmlAppName + ".mybluemix.net/api/"
                         + xmlAPILoc
-                        + "?id=" + cloudant_DocID
+                        + "?id=" + xmlID
                         + "&name=" + xmlName
                         + "&value=" + xmlValue;
 
@@ -83,27 +80,22 @@ angular.module('myApp.bms', ['ionic'])
         form.append("file", audioFile);
         var payload = form;
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", senderURL, true);
-        xhr.send(payload);
         preview.innerHTML = loadingGif;
-        var pct = 0;
-        var elem = document.getElementById("myBar"); 
-        xhr.upload.addEventListener("progress", function(e) {elem.style.width = pct + '%'; pct = Math.round(e.loaded / e.total);}, true);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", senderURL);
+        xhr.send(payload);
 
 	    xhr.onreadystatechange = function(){
             if(xhr.readyState == 4){
                 if(xhr.status == 200){
-                    alert("File uploaded successfully");
+                    preview.innerHTML = "";
+                    alert("File uploaded successfully.");
                 }else{
                     alert("ERROR:\n" + xhr.responseText);
                 }
-                loader.innerHTML = "";
-                preview.innerHTML = "";
             }
-            alert(pct);
-        };
-
+        }
     };
 
 
@@ -113,7 +105,7 @@ angular.module('myApp.bms', ['ionic'])
         r.readAsDataURL(f);                                     // Uses the FilReader to actually read in the file
         r.addEventListener( "load",                             // Once the file has been read, begin the following:
                             function () {
-                                audioURL = this.result;        // The file will be in the form of a DataURL
+                                var audioURL = this.result;        // The file will be in the form of a DataURL
                                 preview.innerHTML = audioPreview(audioURL, cloudant_MIMEtype);
                             },
                             false); // useCapture. Essentially assigns priority for alerts. FALSE is fine for our case.
@@ -125,7 +117,8 @@ angular.module('myApp.bms', ['ionic'])
                                 + xmlAPILoc
                                 + "?id=" + cloudant_DocID
                                 + "&key=" + "baseball_hit_orbitz.wav"
-
+        
+        preview.innerHTML = loadingGif;
         var xhr = new XMLHttpRequest();
 	    xhr.open("GET", requesterURL, true);
 	    xhr.onload = function(e){
@@ -135,6 +128,7 @@ angular.module('myApp.bms', ['ionic'])
         xhr.send();
         xhr.onreadystatechange = function(){
             if((xhr.readyState == 4) && (xhr.status == 200)){
+                    preview.innerHTML = "";
                     document.getElementById('upload_file').files[0] = xhr.response;
                     $scope.displayer();
             }
