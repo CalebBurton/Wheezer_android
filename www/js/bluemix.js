@@ -56,7 +56,7 @@ angular.module('myApp.bms', ['ionic'])
     $scope.recordings = Recordings.all();
 
     var audioPreview = function(src, type) {
-        return "<audio controls>" + "<source " + "src=\"" + src + "\"" + "type=\"" + type + "\">" + "</audio>";
+        return "<audio controls>" + "<source " + "src=\"" + src + "\"" + "type=\"" + type + "\" />" + "</audio>";
     }
 
     var createRecording = function(recordingName) {
@@ -102,14 +102,21 @@ angular.module('myApp.bms', ['ionic'])
 
     $scope.displayer = function(num){
         var f = document.getElementById('upload_file').files[num] // Gives a convenient way to reference the file we uploaded
-        var r = new FileReader();                               // Initializes a FileReader
+        var r = new FileReader();                               // Initializes a FILE FileReader (standard FileReader type overwritten by FILE plugin)
         r.readAsDataURL(f);                                     // Uses the FilReader to actually read in the file
-        r.addEventListener( "load",                             // Once the file has been read, begin the following:
+        r.onloadend =
+            function () {
+                var audioURL = this.result;        // The file will be in the form of a DataURL
+                preview.innerHTML = audioPreview(audioURL, cloudant_MIMEtype);
+            };
+
+        /*r.addEventListener( "onloadend",                             // Once the file has been read, begin the following:
                             function () {
                                 var audioURL = this.result;        // The file will be in the form of a DataURL
                                 preview.innerHTML = audioPreview(audioURL, cloudant_MIMEtype);
                             },
                             false); // useCapture. Essentially assigns priority for alerts. FALSE is fine for our case.
+        */
     };
 
     $scope.downloader = function() {
@@ -124,19 +131,65 @@ angular.module('myApp.bms', ['ionic'])
         xhr.responseType = "blob";
         xhr.send();
         xhr.onreadystatechange = function(){
-            if((xhr.readyState == 4) && (xhr.status == 200)){
+            if(xhr.readyState == 4){
+                if(xhr.status == 200){
                     loader.innerHTML = "";
                     var fileCache = document.getElementById('upload_file');
                     var num = 0;
                     if (fileCache.files[0] != null){num = 1;}
                     fileCache.files[num] = xhr.response;
                     $scope.displayer(num);
-            }
-            else{
-                alert("ERROR:\n" + xhr.responseText);
+                }
+                else{
+                    alert("ERROR");
+                    console.log(xhr);
+                }
             }
 	    };
     };
+
+    $scope.sound = {name:""};
+
+    $scope.recorder = function() {
+		navigator.device.capture.captureAudio(
+    		captureSuccess,
+            captureError,
+            {duration:10}
+        );
+	}
+
+	var captureError = function(e) {
+		alert("Recording errors: ", e.errorDescription);
+	}
+	
+	var captureSuccess = function(e) {
+		$scope.sound.file = e[0].localURL;
+		$scope.sound.filePath = e[0].fullPath;
+        $scope.sound.dataFile = e[0];
+        console.log(e);
+        console.log("Save successful\nFile name: " + $scope.sound.file + "\nFile path: " + $scope.sound.filePath);
+	}
+
+    $scope.player = function() {
+		if(!$scope.sound.file) {
+			alert("Record a sound first");
+			return;
+		}
+/*
+        var location1 = $scope.sound.file.substring(9);
+        var location2 = $scope.sound.filePath.substring(5);
+        console.log(location1);
+        console.log(location2);
+        preview.innerHTML = audioPreview($scope.sound.file, "audio/mp4");
+*/
+		var media = new Media($scope.sound.file, function(e) {
+			media.release();
+		}, function(err) {
+			console.log("media err", err);
+		});
+		media.play();
+        
+	}
 	    
 /*
     $scope.dataURLtoBlob = function(dataurl) {

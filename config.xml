@@ -3,12 +3,13 @@
     <name>Wheezer</name>
     <icon src="resources/assist-badge.png" />
     <description>
-        Patient-facing UI for pulling data from the ASSIST HET chest patch via Bluetooth and sending it to a Bluemix server.
+        Patient-facing UI for pulling data from the ASSIST Wheeze Patch via Bluetooth and sending it to a Bluemix server.
     </description>
     <author email="dev@cordova.apache.org" href="http://cordova.io">
         Caleb C. Burton
     </author>
     <content src="index.html" />
+    <access origin="cdvfile://*" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <access origin="*" />
     

@@ -41,6 +41,13 @@
         <param name="onload" value="true" />
     </feature>
     <access origin="https://accounts.google.com/*" />
+    <feature name="File">
+        <param name="android-package" value="org.apache.cordova.file.FileUtils" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="Capture">
+        <param name="android-package" value="org.apache.cordova.mediacapture.Capture" />
+    </feature>
     <feature name="Diagnostic">
         <param name="android-package" value="cordova.plugins.Diagnostic" />
         <param name="onload" value="true" />
@@ -50,12 +57,13 @@
     <name>Wheezer</name>
     <icon src="resources/assist-badge.png" />
     <description>
-        Patient-facing UI for pulling data from the ASSIST HET chest patch via Bluetooth and sending it to a Bluemix server.
+        Patient-facing UI for pulling data from the ASSIST Wheeze Patch via Bluetooth and sending it to a Bluemix server.
     </description>
     <author email="dev@cordova.apache.org" href="http://cordova.io">
         Caleb C. Burton
     </author>
     <content src="index.html" />
+    <access origin="cdvfile://*" />
     <access origin="*" />
     <splash src="resources/splash.png" />
     <preference name="SplashScreenDelay" value="3000" />
