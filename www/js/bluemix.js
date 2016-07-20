@@ -182,13 +182,16 @@ angular.module('myApp.bms', ['ionic'])
         console.log(location2);
         preview.innerHTML = audioPreview($scope.sound.file, "audio/mp4");
 */
+
+// INSTALL THE MEDIA PLUGIN FOR THIS TO WORK!
+/*
 		var media = new Media($scope.sound.file, function(e) {
 			media.release();
 		}, function(err) {
 			console.log("media err", err);
 		});
 		media.play();
-        
+ */       
 	}
 	    
 /*
