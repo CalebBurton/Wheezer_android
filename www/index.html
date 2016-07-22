@@ -4,10 +4,13 @@
     <meta charset="utf-8">
     <title>Wheezer</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: cdvfile: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
+<!--  ; media-src * -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: cdvfile: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'">
+
 
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link href="css/w3style.css" rel="stylesheet">
     
     <script src="cordova.js"></script>
     <script src="lib/ionic/js/ionic.bundle.js"></script>
@@ -15,6 +18,9 @@
     <script src="js/parent.js"></script>
     <script src="js/app.js"></script>
     <script src="js/bluemix.js"></script>
+    <script src="js/wav.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/WavAudioEncoder.min.js"></script>
 
     <script src="js/ble.js"></script>
     <script src="js/base64.js"></script>
@@ -58,13 +64,6 @@
             {{activePatient.state}}
           </div>
           -->
-          <!--
-          <div class="text-response">
-            <h1 id="text-big"></h1>
-            <p id="text-connected">You are not connected!</p>
-            <p id="text-details"></p>
-          </div>
-          -->
           <div>
             <div>
               <ion-checkbox ng-repeat="todo in todos track by todo.id"
@@ -75,6 +74,7 @@
               </ion-checkbox>
             </div>
             <div>
+<!-- -->
               <br />
               <br />
               <br />
@@ -87,13 +87,23 @@
               <br /><br />
               <button id="btn-download" class="btn btn-lg" ng-click="downloader()">Ping server for current attachments</button>
               <br /><br />
-              <button id="btn-record" class="btn btn-lg" ng-click="recorder()">Record new audio</button>
-              <br /><br />
-              <button id="btn-play" class="btn btn-lg" ng-click="player()">Play custom audio</button>
+              <input id="startCapture" type="button" class="w3-btn w3-green margin-5" value="Start Recording">
+              <input id="stopCapture" type="button" class="w3-btn w3-red margin-5" value="Stop Recording" disabled>
+<!--
               <br /><br />
               <div id="loader"></div>
               <br />
               <div id="preview"></div>
+-->
+
+              <div id="infoTimer" class="w3-container w3-section w3-border-green w3-border w3-small"></div>
+                <div class="w3-card-4">
+                  <form class="w3-container w3-margin w3-padding-small">
+                    <div  id="recording-list" class="w3-section w3-border-green w3-border margin-5 w3-small" style="width: 99%;">Preview space
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
         <!-----------------------------------
         ---- END OF BLUEMIX CONTROLLER ------

@@ -13,7 +13,7 @@ angular.element(document).ready(
                 var cloudant_bms_route = "http://ccb-cloudant.mybluemix.net";
                 var cloudant_bms_guid = "503a965b-5ba8-4a3d-b7e7-403375548369";
                     
-                BMSClient.initialize(cloudant_bms_route, cloudant_bms_guid);
+                BMSClient.initialize(cloudant_bms_route, cloudant_bms_guid); // No longer necessary, since we're using the API now
             },
             false
         );

@@ -284,6 +284,13 @@ module.exports = [
         "clobbers": [
             "navigator.device.capture"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-audioinput/www/audioInputCapture.js",
+        "id": "cordova-plugin-audioinput.AudioInput",
+        "clobbers": [
+            "audioinput"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -299,7 +306,8 @@ module.exports.metadata =
     "cordova-plugin-googleplus": "4.0.9",
     "cordova-plugin-compat": "1.0.0",
     "cordova-plugin-file": "4.2.0",
-    "cordova-plugin-media-capture": "1.3.0"
+    "cordova-plugin-media-capture": "1.3.0",
+    "cordova-plugin-audioinput": "0.3.0"
 };
 // BOTTOM OF METADATA
 });

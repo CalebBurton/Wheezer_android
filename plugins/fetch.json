@@ -95,5 +95,14 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "cordova-plugin-audioinput": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/edimuj/cordova-plugin-audioinput.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

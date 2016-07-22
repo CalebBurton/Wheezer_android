@@ -13,12 +13,12 @@ angular.module('myApp.bms', ['ionic'])
     save: function(recordings) {
       window.localStorage['recordings'] = angular.toJson(recordings);
     },
-    newRecording: function(recordingName) {
+    newRecording: function(recordingName, audioBlob) {
       var currentTime = Date.now();
       return {
         title: recordingName,
         created: currentTime,
-        audioData: ""
+        audioData: audioBlob
       };
     },
   }
@@ -59,10 +59,12 @@ angular.module('myApp.bms', ['ionic'])
         return "<audio controls>" + "<source " + "src=\"" + src + "\"" + "type=\"" + type + "\" />" + "</audio>";
     }
 
-    var createRecording = function(recordingName) {
-        var newRecording = Recordings.newRecording(recordingName);
+    var createRecording = function(recordingName, audioBlob) {
+        var newRecording = Recordings.newRecording(recordingName, audioBlob);
         $scope.recordings.push(newRecording);
+        console.log("New recording added to array");
         Recordings.save($scope.recordings);
+        console.log("Recordings array saved in memory");
     }
     
     $scope.bms_success = function(successMsg) {
@@ -102,8 +104,8 @@ angular.module('myApp.bms', ['ionic'])
 
     $scope.displayer = function(num){
         var f = document.getElementById('upload_file').files[num] // Gives a convenient way to reference the file we uploaded
-        var r = new FileReader();                               // Initializes a FILE FileReader (standard FileReader type overwritten by FILE plugin)
-        r.readAsDataURL(f);                                     // Uses the FilReader to actually read in the file
+        var r = new FileReader();   // Initializes a FILE FileReader (standard FileReader type overwritten by FILE plugin)
+        r.readAsDataURL(f);         // Uses the FilReader to actually read in the file
         r.onloadend =
             function () {
                 var audioURL = this.result;        // The file will be in the form of a DataURL
@@ -159,15 +161,65 @@ angular.module('myApp.bms', ['ionic'])
 	}
 
 	var captureError = function(e) {
-		alert("Recording errors: ", e.errorDescription);
+		console.log("Recording errors: ", e);
 	}
 	
-	var captureSuccess = function(e) {
-		$scope.sound.file = e[0].localURL;
-		$scope.sound.filePath = e[0].fullPath;
-        $scope.sound.dataFile = e[0];
-        console.log(e);
+	var captureSuccess = function(eCap) {
+		$scope.sound.file = eCap[0].localURL;
+		$scope.sound.filePath = eCap[0].fullPath;
+        $scope.sound.dataFile = eCap;
+        console.log("$scope.sound: ", $scope.sound);
+        console.log("MediaFile: ", eCap);
+        console.log("First object: ", eCap[0]);
         console.log("Save successful\nFile name: " + $scope.sound.file + "\nFile path: " + $scope.sound.filePath);
+        
+        var loc = cordova.file.dataDirectory;
+        var extension = $scope.sound.file.split(".").pop();
+		var filepart = Date.now();
+		var filename = filepart + "." + extension;
+		console.log("New filename is "+ filename);
+        console.log("loc: ", loc);
+
+        
+        createRecording(filename, $scope.sound.dataFile[0].fullPath);
+
+        var f = $scope.sound.dataFile[0].fullPath; // Gives a convenient way to reference the file we uploaded
+        preview.innerHTML = audioPreview(f, "audio/mp4");
+/*
+        window.resolveLocalFileSystemURL(
+            loc,
+            function(d) {
+                console.log("d: ", d);
+                window.resolveLocalFileSystemURL(
+                    $scope.sound.file,
+                    function(fe) {
+                        console.log("fe: ", fe);
+                        fe.copyTo(
+                            d,
+                            filename,
+                            function(e) {
+                                console.log('success in copy');
+                                console.dir(e);
+                                $scope.sound.file = e.nativeURL;
+                                $scope.sound.path = e.fullPath;
+                            },
+                            function(e) {
+                                console.log('error in copy');
+                                console.dir(e);
+                            }
+                        );                 
+                    },
+                    function(e) {
+                        console.log("error in inner loop");
+                        console.dir(e);
+                    }
+                );	
+		    },
+            function(e) {
+			    console.log('error in fs');console.dir(e);
+		    }
+        );
+*/
 	}
 
     $scope.player = function() {
@@ -178,19 +230,44 @@ angular.module('myApp.bms', ['ionic'])
 /*
         var location1 = $scope.sound.file.substring(9);
         var location2 = $scope.sound.filePath.substring(5);
-        console.log(location1);
-        console.log(location2);
-        preview.innerHTML = audioPreview($scope.sound.file, "audio/mp4");
+        
+        location1 = $scope.sound.file;
+        location2 = $scope.sound.filePath;
+
+        console.log("media location: ", location2);
 */
+        //preview.innerHTML = audioPreview(location2, "audio/mp4");
+        //console.log("inner HTML: ", preview.innerHTML);
+        console.log("Recordings: ", $scope.recordings);
+        console.log("Scope: ", $scope);
+
+        
+        var recLength = $scope.recordings.length
+        console.log("recLength: ", recLength);
+
+        var f = Recordings[recLength-1].audioData; // Gives a convenient way to reference the file we uploaded
+        console.log("Reading file ", f);
+        var r = new FileReader();        // Initializes a FILE FileReader (standard FileReader type overwritten by FILE plugin)
+        r.readAsDataURL(f);              // Uses the FilReader to actually read in the file
+        r.onloadend =
+            function () {
+                preview.innerHTML = audioPreview(this.result, "audio/mp4");
+            };
+        
+    };
+
+
+// INSTALL THE MEDIA PLUGIN FOR THIS TO WORK!
+/*
 		var media = new Media($scope.sound.file, function(e) {
 			media.release();
 		}, function(err) {
 			console.log("media err", err);
 		});
 		media.play();
-        
+      
 	}
-	    
+*/ 	    
 /*
     $scope.dataURLtoBlob = function(dataurl) {
         var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],

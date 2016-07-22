@@ -147,7 +147,7 @@ angular.module('myApp.todo', ['ionic'])
   $timeout(function() {
     if($scope.patients.length == 0) {
       while(true) {
-        var patientTitle = prompt('Your first patient\'s name:');
+        var patientTitle = "Alex"; //prompt('Your first patient\'s name:');
         if(patientTitle) {
           createPatient(patientTitle);
           break;
