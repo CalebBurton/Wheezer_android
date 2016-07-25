@@ -91,12 +91,19 @@ var startCapture = function () {
 
             // Start the Interval that outputs time and debug data while capturing
             //
-            var elapsedTime = 0;
+            var startTime = new Date();
+            var currentTime;
+            var elapsedSec;
+            var pad = "00";
             timerInterVal = setInterval(function () {
+                currentTime = new Date();
+                elapsedSec = Math.floor((currentTime - startTime)/1000);
+                elapsedSec = (pad + elapsedSec).slice(-2);    // SLICE formats the string answer with leading 0
                 if (audioinput.isCapturing()) {
-                    document.getElementById("infoTimer").innerHTML = "" +
-                        new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1") +
-                        "|Received:" + totalReceivedData;
+                    document.getElementById("infoTimer").innerHTML = "Time Recorded: " +
+                        "00:" + elapsedSec +
+                       // elapsedTime.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1") +
+                        " | Bits Recorded:" + totalReceivedData;
                 }
             }, 1000);
 
@@ -143,9 +150,11 @@ var stopCapture = function () {
 
             reader.onload = function (evt) {
                 var audio = document.createElement("AUDIO");
+                var text = document.createTextNode("New Recording");
                 audio.controls = true;
                 audio.src = evt.target.result;
                 audio.type = "audio/wav";
+                document.getElementById("recording-list").appendChild(text);
                 document.getElementById("recording-list").appendChild(audio);
                 console.log("Audio created");
                 audioDataBuffer = [];
@@ -194,3 +203,14 @@ var onDeviceReady = function () {
 if (window.cordova) {
     document.addEventListener('deviceready', onDeviceReady, false);
 }
+
+
+/*
+--------------------------------------------------------------
+----------------- USEFUL LINKS FOR REFERENCE -----------------
+--------------------------------------------------------------
+
+Audio input plugin:
+    https://www.npmjs.com/package/cordova-plugin-audioinput
+
+*/

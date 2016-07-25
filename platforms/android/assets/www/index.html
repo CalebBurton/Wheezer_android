@@ -5,7 +5,7 @@
     <title>Wheezer</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 <!--  ; media-src * -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: cdvfile: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: cdvfile: https://ssl.gstatic.com http://ccb-cloudant.mybluemix.net 'unsafe-eval'; style-src 'self' 'unsafe-inline'">
 
 
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
@@ -77,11 +77,9 @@
 <!-- -->
               <br />
               <br />
-              <br />
-              <br />
               <input type="file" name="file" id="upload_file">
               <br /><br />
-              <button id="btn-ping" class="btn btn-lg" ng-click="cloudant_upload()">Upload to server</button>
+              <button id="btn-ping" class="btn btn-lg" ng-click="cloudant_upload(true)">Upload file to server</button>
               <br /><br />
               <button id="btn-upload" class="btn btn-lg" ng-click="displayer(0)">View uploaded file</button>
               <br /><br />
@@ -89,20 +87,16 @@
               <br /><br />
               <input id="startCapture" type="button" class="w3-btn w3-green margin-5" value="Start Recording">
               <input id="stopCapture" type="button" class="w3-btn w3-red margin-5" value="Stop Recording" disabled>
-<!--
-              <br /><br />
-              <div id="loader"></div>
-              <br />
-              <div id="preview"></div>
--->
 
               <div id="infoTimer" class="w3-container w3-section w3-border-green w3-border w3-small"></div>
                 <div class="w3-card-4">
                   <form class="w3-container w3-margin w3-padding-small">
                     <div  id="recording-list" class="w3-section w3-border-green w3-border margin-5 w3-small" style="width: 99%;">Preview space
+                    <div id="loader"></div>
                     </div>
                   </form>
                 </div>
+                <button id="btn-up" class="btn btn-lg" ng-click="cloudant_upload(false)">Upload recording to server</button>
               </div>
             </div>
         <!-----------------------------------

@@ -32,26 +32,25 @@ angular.module('myApp.bms', ['ionic'])
 
     var cloudant_Username = "812cf44b-c59b-4288-a505-ad7e6b1b2f55-bluemix";
     var cloudant_Database = "my_sample_db";                             // Will be the same accross all patients
-    var cloudant_DocID = "9824ffba8c5837b1272a1fb08c96dec3";            // Will be unique to each patient
+    var cloudant_DocID = "f081c331c1d0842fd740cb801776bff8";            // Will be unique to each patient
     var cloudant_DocRev = "";                                           // Will be updated by pinging the server below
-    var cloudant_Attachment = "Date.now()" + ".wav";                    // Named by time. Ensures that each file name will be unique
+    var cloudant_Attachment = Date.now() + ".wav";                    // Named by time. Ensures that each file name will be unique
     var cloudant_MIMEtype = "audio/wav";
-    var preview = document.querySelector('#preview');                   // Grabs a <div> element. We'll modify it later to give a preview
+    var preview = document.querySelector('#recording-list');                   // Grabs a <div> element. We'll modify it later to give a preview
     var loader = document.querySelector('#loader');
     var loadingGif = "<img src=\"img/loadingGif.gif\" height=100>";
 
     var xmlAppName = "ccb-cloudant";
     var xmlAPILoc = "favorites/attach";
     var xmlID = cloudant_DocID;
-    var xmlName = "document2";
-    var xmlValue = "doc2description";
+    var xmlName = "patient_1";
+    var xmlValue = "p1description";
 
-    var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
-    var senderURL = "http://" + xmlAppName + ".mybluemix.net/api/"
-                        + xmlAPILoc
-                        + "?id=" + xmlID
-                        + "&name=" + xmlName
-                        + "&value=" + xmlValue;
+    //var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
+    
+    var baseURL = "http://" + xmlAppName + ".mybluemix.net/api/" + xmlAPILoc + "?id=" + xmlID
+    var requesterURL = baseURL + "&key=" + "ahem_x.wav"
+    var senderURL = baseURL + "&name=" + xmlName + "&value=" + xmlValue;
 
     $scope.recordings = Recordings.all();
 
@@ -76,57 +75,65 @@ angular.module('myApp.bms', ['ionic'])
     };
 
 
-    $scope.cloudant_upload = function() {
-        funct = "CLOUDANT_UPLOAD";
-        var audioFile = document.getElementById('upload_file').files[0];
+    $scope.cloudant_upload = function(b) {
+        loader.innerHTML = loadingGif;
+
+        var audioFile;
+        if(b){  // File from memory
+            audioFile = document.getElementById('upload_file').files[0];
+        }
+        else{   // New recording
+            var aURL = preview.firstChild.nextSibling.src;
+            audioFile = $scope.dataURLtoBlob(aURL);
+            audioFile.__proto__.Symbol(Symbol.toStringTag) = "TEST FILE.wav";
+            //audioFile = new File("TEST NAME.wav", audioFile, audioFile.type, Date.now(), audioFile.size);
+            //(name, localURL, type, lastModifiedDate, size)
+        }
+        console.log(audioFile);
+        /*
         var form = new FormData();
         form.append("file", audioFile);
         var payload = form;
 
-        loader.innerHTML = loadingGif;
-
+        
         var xhr = new XMLHttpRequest();
         xhr.open("POST", senderURL);
         xhr.send(payload);
 
 	    xhr.onreadystatechange = function(){
             if(xhr.readyState == 4){
+                loader.innerHTML = "";
                 if(xhr.status == 200){
-                    loader.innerHTML = "";
                     alert("File uploaded successfully.");
                 }else{
-                    alert("ERROR:\n" + xhr.responseText);
+                    alert("ERROR");
+                    console.log("Upload Error: ", xhr.responseText);
+                    console.log(xhr);
                 }
             }
-        }
+        }*/
     };
 
 
     $scope.displayer = function(num){
+        console.log("Displaying ", document.getElementById('upload_file').files[num].name)
         var f = document.getElementById('upload_file').files[num] // Gives a convenient way to reference the file we uploaded
+        var newname = new Date().toUTCString();
+        newname += ".wav";
+        console.log("Possible new name: ", newname);
+        console.log("File object: ", f);
         var r = new FileReader();   // Initializes a FILE FileReader (standard FileReader type overwritten by FILE plugin)
         r.readAsDataURL(f);         // Uses the FilReader to actually read in the file
         r.onloadend =
             function () {
                 var audioURL = this.result;        // The file will be in the form of a DataURL
-                preview.innerHTML = audioPreview(audioURL, cloudant_MIMEtype);
+                preview.innerHTML = f.name;
+                preview.innerHTML += audioPreview(audioURL, cloudant_MIMEtype);
             };
-
-        /*r.addEventListener( "onloadend",                             // Once the file has been read, begin the following:
-                            function () {
-                                var audioURL = this.result;        // The file will be in the form of a DataURL
-                                preview.innerHTML = audioPreview(audioURL, cloudant_MIMEtype);
-                            },
-                            false); // useCapture. Essentially assigns priority for alerts. FALSE is fine for our case.
-        */
     };
 
     $scope.downloader = function() {
         funct = "DOWNLOADER";
-        var requesterURL = "http://" + xmlAppName + ".mybluemix.net/api/"
-                                + xmlAPILoc
-                                + "?id=" + cloudant_DocID
-                                + "&key=" + "baseball_hit_orbitz.wav"
         loader.innerHTML = loadingGif;
         var xhr = new XMLHttpRequest();
 	    xhr.open("GET", requesterURL, true);
@@ -134,8 +141,8 @@ angular.module('myApp.bms', ['ionic'])
         xhr.send();
         xhr.onreadystatechange = function(){
             if(xhr.readyState == 4){
+                loader.innerHTML = "";
                 if(xhr.status == 200){
-                    loader.innerHTML = "";
                     var fileCache = document.getElementById('upload_file');
                     var num = 0;
                     if (fileCache.files[0] != null){num = 1;}
@@ -144,131 +151,13 @@ angular.module('myApp.bms', ['ionic'])
                 }
                 else{
                     alert("ERROR");
+                    console.log("Download Error: ", xhr.responseText);
                     console.log(xhr);
                 }
             }
 	    };
-    };
+    };	    
 
-    $scope.sound = {name:""};
-
-    $scope.recorder = function() {
-		navigator.device.capture.captureAudio(
-    		captureSuccess,
-            captureError,
-            {duration:10}
-        );
-	}
-
-	var captureError = function(e) {
-		console.log("Recording errors: ", e);
-	}
-	
-	var captureSuccess = function(eCap) {
-		$scope.sound.file = eCap[0].localURL;
-		$scope.sound.filePath = eCap[0].fullPath;
-        $scope.sound.dataFile = eCap;
-        console.log("$scope.sound: ", $scope.sound);
-        console.log("MediaFile: ", eCap);
-        console.log("First object: ", eCap[0]);
-        console.log("Save successful\nFile name: " + $scope.sound.file + "\nFile path: " + $scope.sound.filePath);
-        
-        var loc = cordova.file.dataDirectory;
-        var extension = $scope.sound.file.split(".").pop();
-		var filepart = Date.now();
-		var filename = filepart + "." + extension;
-		console.log("New filename is "+ filename);
-        console.log("loc: ", loc);
-
-        
-        createRecording(filename, $scope.sound.dataFile[0].fullPath);
-
-        var f = $scope.sound.dataFile[0].fullPath; // Gives a convenient way to reference the file we uploaded
-        preview.innerHTML = audioPreview(f, "audio/mp4");
-/*
-        window.resolveLocalFileSystemURL(
-            loc,
-            function(d) {
-                console.log("d: ", d);
-                window.resolveLocalFileSystemURL(
-                    $scope.sound.file,
-                    function(fe) {
-                        console.log("fe: ", fe);
-                        fe.copyTo(
-                            d,
-                            filename,
-                            function(e) {
-                                console.log('success in copy');
-                                console.dir(e);
-                                $scope.sound.file = e.nativeURL;
-                                $scope.sound.path = e.fullPath;
-                            },
-                            function(e) {
-                                console.log('error in copy');
-                                console.dir(e);
-                            }
-                        );                 
-                    },
-                    function(e) {
-                        console.log("error in inner loop");
-                        console.dir(e);
-                    }
-                );	
-		    },
-            function(e) {
-			    console.log('error in fs');console.dir(e);
-		    }
-        );
-*/
-	}
-
-    $scope.player = function() {
-		if(!$scope.sound.file) {
-			alert("Record a sound first");
-			return;
-		}
-/*
-        var location1 = $scope.sound.file.substring(9);
-        var location2 = $scope.sound.filePath.substring(5);
-        
-        location1 = $scope.sound.file;
-        location2 = $scope.sound.filePath;
-
-        console.log("media location: ", location2);
-*/
-        //preview.innerHTML = audioPreview(location2, "audio/mp4");
-        //console.log("inner HTML: ", preview.innerHTML);
-        console.log("Recordings: ", $scope.recordings);
-        console.log("Scope: ", $scope);
-
-        
-        var recLength = $scope.recordings.length
-        console.log("recLength: ", recLength);
-
-        var f = Recordings[recLength-1].audioData; // Gives a convenient way to reference the file we uploaded
-        console.log("Reading file ", f);
-        var r = new FileReader();        // Initializes a FILE FileReader (standard FileReader type overwritten by FILE plugin)
-        r.readAsDataURL(f);              // Uses the FilReader to actually read in the file
-        r.onloadend =
-            function () {
-                preview.innerHTML = audioPreview(this.result, "audio/mp4");
-            };
-        
-    };
-
-
-// INSTALL THE MEDIA PLUGIN FOR THIS TO WORK!
-/*
-		var media = new Media($scope.sound.file, function(e) {
-			media.release();
-		}, function(err) {
-			console.log("media err", err);
-		});
-		media.play();
-      
-	}
-*/ 	    
-/*
     $scope.dataURLtoBlob = function(dataurl) {
         var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
             bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -277,7 +166,7 @@ angular.module('myApp.bms', ['ionic'])
         }
         return new Blob([u8arr], {type:mime});
     }
-
+/*
     $scope.blobToDataURL = function(blob, callback) {
         var a = new FileReader();
         a.onload = function(e) {return e.target.result;}
