@@ -34,7 +34,6 @@ angular.module('myApp.bms', ['ionic'])
     var cloudant_Database = "my_sample_db";                             // Will be the same accross all patients
     var cloudant_DocID = "f081c331c1d0842fd740cb801776bff8";            // Will be unique to each patient
     var cloudant_DocRev = "";                                           // Will be updated by pinging the server below
-    var cloudant_Attachment = Date.now() + ".wav";                    // Named by time. Ensures that each file name will be unique
     var cloudant_MIMEtype = "audio/wav";
     var preview = document.querySelector('#recording-list');                   // Grabs a <div> element. We'll modify it later to give a preview
     var loader = document.querySelector('#loader');
@@ -81,6 +80,7 @@ angular.module('myApp.bms', ['ionic'])
         var audioFile;
         if(b){  // File from memory
             audioFile = document.getElementById('upload_file').files[0];
+            
         }
         else{   // New recording
             var aURL = preview.firstChild.nextSibling.src;
@@ -89,7 +89,9 @@ angular.module('myApp.bms', ['ionic'])
             fileName += ".wav";
             audioFile = new File([audioBlob], fileName, {type:audioBlob.type});
         }
+        requesterURL = baseURL + "&key=" + audioFile.name;
         console.log(audioFile);
+        console.log(requesterURL);
 
         var form = new FormData();
         form.append("file", audioFile);
@@ -107,8 +109,7 @@ angular.module('myApp.bms', ['ionic'])
                     alert("File uploaded successfully.");
                 }else{
                     alert("ERROR");
-                    console.log("Upload Error: ", xhr.responseText);
-                    console.log(xhr);
+                    console.log("Upload Error: ", xhr);
                 }
             }
         }
@@ -154,8 +155,7 @@ angular.module('myApp.bms', ['ionic'])
                 }
                 else{
                     alert("ERROR");
-                    console.log("Download Error: ", xhr.responseText);
-                    console.log(xhr);
+                    console.log("Download Error: ", xhr);
                 }
             }
 	    };
