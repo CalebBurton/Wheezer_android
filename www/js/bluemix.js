@@ -84,13 +84,13 @@ angular.module('myApp.bms', ['ionic'])
         }
         else{   // New recording
             var aURL = preview.firstChild.nextSibling.src;
-            audioFile = $scope.dataURLtoBlob(aURL);
-            audioFile.__proto__.Symbol(Symbol.toStringTag) = "TEST FILE.wav";
-            //audioFile = new File("TEST NAME.wav", audioFile, audioFile.type, Date.now(), audioFile.size);
-            //(name, localURL, type, lastModifiedDate, size)
+            var audioBlob = $scope.dataURLtoBlob(aURL);
+            var fileName = new Date().toUTCString();
+            fileName += ".wav";
+            audioFile = new File([audioBlob], fileName, {type:audioBlob.type});
         }
         console.log(audioFile);
-        /*
+
         var form = new FormData();
         form.append("file", audioFile);
         var payload = form;
@@ -111,7 +111,7 @@ angular.module('myApp.bms', ['ionic'])
                     console.log(xhr);
                 }
             }
-        }*/
+        }
     };
 
 
@@ -122,14 +122,17 @@ angular.module('myApp.bms', ['ionic'])
         newname += ".wav";
         console.log("Possible new name: ", newname);
         console.log("File object: ", f);
-        var r = new FileReader();   // Initializes a FILE FileReader (standard FileReader type overwritten by FILE plugin)
+        var r = new FileReader();   // Initializes a FileReader
         r.readAsDataURL(f);         // Uses the FilReader to actually read in the file
-        r.onloadend =
+        r.addEventListener(
+            'load',
             function () {
-                var audioURL = this.result;        // The file will be in the form of a DataURL
-                preview.innerHTML = f.name;
-                preview.innerHTML += audioPreview(audioURL, cloudant_MIMEtype);
-            };
+	            var audioURL = this.result;        // The file will be in the form of a DataURL
+	            preview.innerHTML = f.name;
+	            preview.innerHTML += audioPreview(audioURL, cloudant_MIMEtype);
+	        },
+	        false
+        );            
     };
 
     $scope.downloader = function() {
