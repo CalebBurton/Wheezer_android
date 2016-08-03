@@ -80,6 +80,7 @@ angular.module('myApp.bms', ['ionic'])
         var audioFile;
         if(b){  // File from memory
             audioFile = document.getElementById('upload_file').files[0];
+            
         }
         else{   // New recording
             var aURL = preview.firstChild.nextSibling.src;
@@ -88,7 +89,9 @@ angular.module('myApp.bms', ['ionic'])
             fileName += ".wav";
             audioFile = new File([audioBlob], fileName, {type:audioBlob.type});
         }
+        requesterURL = baseURL + "&key=" + audioFile.name;
         console.log(audioFile);
+        console.log(requesterURL);
 
         var form = new FormData();
         form.append("file", audioFile);
