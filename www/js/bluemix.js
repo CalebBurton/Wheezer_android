@@ -28,14 +28,13 @@ angular.module('myApp.bms', ['ionic'])
 .controller('bmsCtrl', function ($scope, $timeout, $ionicPlatform, $ionicModal, Recordings, $ionicSideMenuDelegate, $ionicActionSheet) {
     // Global vars used for debugging and keeping track of which functions are being called
     var funct = "";
-    // Android Client ID: 853130241725-mtljp8gct4pqtjvvrdt1kl9e8t90vho3.apps.googleusercontent.com
 
     var cloudant_Username = "812cf44b-c59b-4288-a505-ad7e6b1b2f55-bluemix";
-    var cloudant_Database = "my_sample_db";                             // Will be the same accross all patients
-    var cloudant_DocID = "f081c331c1d0842fd740cb801776bff8";            // Will be unique to each patient
+    var cloudant_Database = "my_sample_db";                             // Same accross all patients
+    var cloudant_DocID = "f081c331c1d0842fd740cb801776bff8";            // Unique to each patient
     var cloudant_DocRev = "";                                           // Will be updated by pinging the server below
     var cloudant_MIMEtype = "audio/wav";
-    var preview = document.querySelector('#recording-list');                   // Grabs a <div> element. We'll modify it later to give a preview
+    var preview = document.querySelector('#recording-list');            // Grabs a <div> element. We'll modify it later to give a preview
     var loader = document.querySelector('#loader');
     var loadingGif = "<img src=\"img/loadingGif.gif\" height=100>";
 
@@ -47,12 +46,13 @@ angular.module('myApp.bms', ['ionic'])
 
     //var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
     
-    var baseURL = "http://" + xmlAppName + ".mybluemix.net/api/" + xmlAPILoc + "?id=" + xmlID
+    var baseURL = "http://" + xmlAppName + ".mybluemix.net/api/" + xmlAPILoc + "?id=" + xmlID   // Same for sender and requester
     var requesterURL = baseURL + "&key=" + "ahem_x.wav"
     var senderURL = baseURL + "&name=" + xmlName + "&value=" + xmlValue;
 
     $scope.recordings = Recordings.all();
 
+    // Injects an HTML audio element
     var audioPreview = function(src, type) {
         return "<audio controls>" + "<source " + "src=\"" + src + "\"" + "type=\"" + type + "\" />" + "</audio>";
     }
@@ -73,7 +73,7 @@ angular.module('myApp.bms', ['ionic'])
         alert("The " + funct + " function failed. Response:\n" + failureMsg.errorDescription);
     };
 
-
+    // "b" is a boolean to determine where the file should be uploaded form
     $scope.cloudant_upload = function(b) {
         loader.innerHTML = loadingGif;
 
@@ -115,7 +115,7 @@ angular.module('myApp.bms', ['ionic'])
         }
     };
 
-
+    
     $scope.displayer = function(num){
         console.log("Displaying ", document.getElementById('upload_file').files[num].name)
         var f = document.getElementById('upload_file').files[num] // Gives a convenient way to reference the file we uploaded

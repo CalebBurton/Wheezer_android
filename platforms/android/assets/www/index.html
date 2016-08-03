@@ -4,7 +4,10 @@
     <meta charset="utf-8">
     <title>Wheezer</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-<!--  ; media-src * -->
+    
+    <!--  Content security policies prevent basic code injection attacks. Android gets mad when you don't have one.
+          Current policy allows google's static data and connections to Cloudant.
+    -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: cdvfile: https://ssl.gstatic.com http://ccb-cloudant.mybluemix.net 'unsafe-eval'; style-src 'self' 'unsafe-inline'">
 
 
@@ -15,15 +18,14 @@
     <script src="cordova.js"></script>
     <script src="lib/ionic/js/ionic.bundle.js"></script>
     
-    <script src="js/parent.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/patients.js"></script>
     <script src="js/bluemix.js"></script>
     <script src="js/wav.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/WavAudioEncoder.min.js"></script>
 
     <script src="js/ble.js"></script>
-    <script src="js/base64.js"></script>
     
   </head>
 
@@ -39,12 +41,6 @@
             <i class="icon ion-navicon"></i>
           </button>
           <h1 class="title">Patient: {{activePatient.title}}</h1>
-          <!-- New Task button-->
-<!--
-          <button class="button button-icon" ng-click="newTask()">
-            <i class="icon ion-compose"></i>
-          </button>
--->
         </ion-header-bar>
         <ion-content scroll="false">
  <!--         <ion-refresher
@@ -65,14 +61,6 @@
           </div>
           -->
           <div>
-            <div>
-              <ion-checkbox ng-repeat="todo in todos track by todo.id"
-                            ng-model="todo.isDone"
-                            ng-checked="todo.isDone"
-                            ng-click="bms_deleteAndUpdate(todo.id)">
-                {{ todo.text }}
-              </ion-checkbox>
-            </div>
             <div>
 <!-- -->
               <br />
@@ -122,35 +110,6 @@
           </ion-list>
         </ion-content>
       </ion-side-menu>
-
-      <!-- Modal menu -->
-      <script id="new-task.html" type="text/ng-template">
-          <div class="modal">
-          <!-- Modal header bar -->
-          <ion-header-bar class="bar-dark">
-            <h1 class="title">New Task</h1>
-            <button class="button button-clear button-positive" ng-click="closeNewTask()">Cancel</button>
-          </ion-header-bar>
-
-          <!-- Modal content area -->
-          <ion-content>
-            <form>
-              <div class="list">
-                <label class="item item-input">
-                  <input type="text" placeholder="What do you need to do?" ng-model="task.title">
-                </label>
-              </div>
-              <div class="padding">
-                <button class="button button-block button-positive" ng-click="createTask(task)">Create Task</button>
-                <button class="button button-block button-positive" ng-click="buzzBuzz()">BUZZ BUZZ</button>
-                <button class="button button-block button-positive" ng-click="BLE()">Bluetooth</button>
-              </div>
-            </form>
-          </ion-content>
-        </div>
-      </script>
-
-
     </ion-side-menus>
   </body>
 </html>

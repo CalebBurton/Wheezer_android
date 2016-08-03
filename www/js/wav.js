@@ -1,6 +1,6 @@
 /*
- This demo shows how to collect the raw microphone data, encode it into WAV format and then use the resulting blob
- as src for a HTML Audio element. No Web Audio API support is needed for this to work.
+    This file is a slimmed-down version of the demo code included in the AudioInput plugin.
+    Collects the raw microphone data, encodes it into WAV format and then displays the resulting blob.
  */
 
 // Capture configuration object
@@ -60,17 +60,14 @@ function onAudioInputError(error) {
 var startCapture = function () {
     try {
         if (window.audioinput && !audioinput.isCapturing()) {
-            //var audioSourceElement = document.getElementById("audioSource"),
-            //    audioSourceType = audioSourceElement.options[audioSourceElement.selectedIndex].value;
-
             // Get the audio capture configuration from the UI elements
             //
             captureCfg = {
-                sampleRate: 44100, //1125, //parseInt(document.getElementById('sampleRate').value),
-                bufferSize: 16384, //parseInt(document.getElementById('bufferSize').value),
-                channels: 1, //parseInt(document.querySelector('input[name="channels"]:checked').value),
-                format: "PCM_16BIT", //document.querySelector('input[name="format"]:checked').value,
-                audioSourceType: 0 //parseInt(audioSourceType)
+                sampleRate: 44100,
+                bufferSize: 16384,
+                channels: 1,
+                format: "PCM_16BIT",
+                audioSourceType: 0
                 /*
                     <option value="0">DEFAULT (Android/iOS)</option>
                     <option value="5">CAMCORDER (Android/iOS)</option>
@@ -83,7 +80,7 @@ var startCapture = function () {
             audioinput.start(captureCfg);
             console.log("Microphone input started!");
 
-            // Throw previously created audio
+            // Throw away the previously created audio
             document.getElementById("recording-list").innerHTML = "";
             if (objectURL && URL.revokeObjectURL) {
                 URL.revokeObjectURL(objectURL);
@@ -98,12 +95,10 @@ var startCapture = function () {
             timerInterVal = setInterval(function () {
                 currentTime = new Date();
                 elapsedSec = Math.floor((currentTime - startTime)/1000);
-                elapsedSec = (pad + elapsedSec).slice(-2);    // SLICE formats the string answer with leading 0
+                elapsedSec = (pad + elapsedSec).slice(-2);    // SLICE formats the string with leading 0
                 if (audioinput.isCapturing()) {
                     document.getElementById("infoTimer").innerHTML = "Time Recorded: " +
-                        "00:" + elapsedSec +
-                       // elapsedTime.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1") +
-                        " | Bits Recorded:" + totalReceivedData;
+                        "00:" + elapsedSec + " | Bits Recorded:" + totalReceivedData;
                 }
             }, 1000);
 

@@ -1,4 +1,4 @@
-angular.module('myApp.todo', ['ionic'])
+angular.module('myApp.patients', ['ionic'])
 
 /**
  * The Patients factory handles saving and loading patients

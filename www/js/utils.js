@@ -1,3 +1,4 @@
+/*
 // Determines which platform the demo runs on
 var isMobile = {
     Android: function () {
@@ -10,7 +11,7 @@ var isMobile = {
         return (isMobile.Android() || isMobile.iOS());
     }
 };
-
+*/
 
 var disableStartButton = function() {
     document.getElementById("startCapture").disabled = true;

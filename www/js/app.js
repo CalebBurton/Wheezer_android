@@ -1,10 +1,15 @@
+/*
+    This file acts as a wrapper that allows us to use angular code from multiple files at the same time.
+    It can also be used to create event listeners that run when the document loads.
+*/
 angular.module('myApp', [
     'ionic',
-    'myApp.todo',
+    'myApp.patients',
     'myApp.ble',
     'myApp.bms'
 ]);
 
+/*
 angular.element(document).ready(
     function () {
         document.addEventListener(
@@ -19,3 +24,4 @@ angular.element(document).ready(
         );
     }
 )
+*/
