@@ -1,6 +1,20 @@
+/*
+*** Created by Caleb Burton, an ASSIST intern during the summer of 2016
+*** cburton@u.northwestern.edu
+
+    This module uses the REST protocol to upload/download audio files to a Bluemix Cloudant database
+    using the Cloudant API.
+
+    Originally tried using the official BMS plugin, but ran into quite a few issues. The BMS code is
+    included at the end of the file inside a block comment.
+
+    Doesn't yet support creating/deleting Cloudant documents, so it doesn't support multiple users yet.
+*/
+
 angular.module('myApp.bms', ['ionic'])
 
 // Allows saving and retrieving data from the phone's local storage
+// Not actually used right now, but included in case we want that functionality later.
 .factory('Recordings', function() {
   return {
     all: function() {
@@ -26,16 +40,13 @@ angular.module('myApp.bms', ['ionic'])
 
 
 .controller('bmsCtrl', function ($scope, $timeout, $ionicPlatform, $ionicModal, Recordings, $ionicSideMenuDelegate, $ionicActionSheet) {
-    // Global vars used for debugging and keeping track of which functions are being called
-    var funct = "";
-    // Android Client ID: 853130241725-mtljp8gct4pqtjvvrdt1kl9e8t90vho3.apps.googleusercontent.com
-
+    // Global vars
     var cloudant_Username = "812cf44b-c59b-4288-a505-ad7e6b1b2f55-bluemix";
-    var cloudant_Database = "my_sample_db";                             // Will be the same accross all patients
-    var cloudant_DocID = "f081c331c1d0842fd740cb801776bff8";            // Will be unique to each patient
-    var cloudant_DocRev = "";                                           // Will be updated by pinging the server below
+    var cloudant_Database = "my_sample_db";                             // Same accross all patients
+    var cloudant_DocID = "f081c331c1d0842fd740cb801776bff8";            // Unique to each patient
+    var cloudant_DocRev = "";                                           // Will be updated below by pinging the server
     var cloudant_MIMEtype = "audio/wav";
-    var preview = document.querySelector('#recording-list');                   // Grabs a <div> element. We'll modify it later to give a preview
+    var preview = document.querySelector('#recording-list');            // Grabs a <div> element. We'll modify it later to give a preview
     var loader = document.querySelector('#loader');
     var loadingGif = "<img src=\"img/loadingGif.gif\" height=100>";
 
@@ -47,16 +58,19 @@ angular.module('myApp.bms', ['ionic'])
 
     //var requesterURL =  "https://" + cloudant_Username + ".cloudant.com/" + cloudant_Database + "/" + cloudant_DocID;
     
-    var baseURL = "http://" + xmlAppName + ".mybluemix.net/api/" + xmlAPILoc + "?id=" + xmlID
+    var baseURL = "http://" + xmlAppName + ".mybluemix.net/api/" + xmlAPILoc + "?id=" + xmlID   // Same for sender and requester
     var requesterURL = baseURL + "&key=" + "ahem_x.wav"
     var senderURL = baseURL + "&name=" + xmlName + "&value=" + xmlValue;
 
     $scope.recordings = Recordings.all();
 
+    // Injects an HTML audio element
     var audioPreview = function(src, type) {
         return "<audio controls>" + "<source " + "src=\"" + src + "\"" + "type=\"" + type + "\" />" + "</audio>";
     }
 
+    // Saves a recording to the phone's memory for future retrieval.
+    // Not utilized yet, but might be in the future.
     var createRecording = function(recordingName, audioBlob) {
         var newRecording = Recordings.newRecording(recordingName, audioBlob);
         $scope.recordings.push(newRecording);
@@ -64,16 +78,8 @@ angular.module('myApp.bms', ['ionic'])
         Recordings.save($scope.recordings);
         console.log("Recordings array saved in memory");
     }
-    
-    $scope.bms_success = function(successMsg) {
-        alert("The " + funct + " function succeeded! Response:\n" + successMsg.responseText);
-    };
 
-    $scope.bms_failure = function(failureMsg) {
-        alert("The " + funct + " function failed. Response:\n" + failureMsg.errorDescription);
-    };
-
-
+    // "b" is a boolean to determine where the file should come from
     $scope.cloudant_upload = function(b) {
         loader.innerHTML = loadingGif;
 
@@ -93,6 +99,7 @@ angular.module('myApp.bms', ['ionic'])
         console.log(audioFile);
         console.log(requesterURL);
 
+        // The Cloudant API wants uploads to come as a "form" object. Not sure why.
         var form = new FormData();
         form.append("file", audioFile);
         var payload = form;
@@ -115,20 +122,16 @@ angular.module('myApp.bms', ['ionic'])
         }
     };
 
-
+    
     $scope.displayer = function(num){
         console.log("Displaying ", document.getElementById('upload_file').files[num].name)
-        var f = document.getElementById('upload_file').files[num] // Gives a convenient way to reference the file we uploaded
-        var newname = new Date().toUTCString();
-        newname += ".wav";
-        console.log("Possible new name: ", newname);
-        console.log("File object: ", f);
+        var f = document.getElementById('upload_file').files[num] // Gives a convenient way to reference the file we're interested in
         var r = new FileReader();   // Initializes a FileReader
         r.readAsDataURL(f);         // Uses the FilReader to actually read in the file
         r.addEventListener(
             'load',
             function () {
-	            var audioURL = this.result;        // The file will be in the form of a DataURL
+	            var audioURL = this.result; // The file will be in the form of a DataURL
 	            preview.innerHTML = f.name;
 	            preview.innerHTML += audioPreview(audioURL, cloudant_MIMEtype);
 	        },
@@ -137,7 +140,6 @@ angular.module('myApp.bms', ['ionic'])
     };
 
     $scope.downloader = function() {
-        funct = "DOWNLOADER";
         loader.innerHTML = loadingGif;
         var xhr = new XMLHttpRequest();
 	    xhr.open("GET", requesterURL, true);
@@ -147,9 +149,15 @@ angular.module('myApp.bms', ['ionic'])
             if(xhr.readyState == 4){
                 loader.innerHTML = "";
                 if(xhr.status == 200){
+                    // This part is only necessary if the user can select their own file to upload,
+                    // which was a feature that was mainly used to demonstrate upload capability before
+                    // the audio recording functionality was available. Probably won't be present in
+                    // the final production release.
                     var fileCache = document.getElementById('upload_file');
                     var num = 0;
-                    if (fileCache.files[0] != null){num = 1;}
+                    if (fileCache.files[0] != null){
+                        num = 1;
+                    }
                     fileCache.files[num] = xhr.response;
                     $scope.displayer(num);
                 }
@@ -169,15 +177,6 @@ angular.module('myApp.bms', ['ionic'])
         }
         return new Blob([u8arr], {type:mime});
     }
-/*
-    $scope.blobToDataURL = function(blob, callback) {
-        var a = new FileReader();
-        a.onload = function(e) {return e.target.result;}
-        a.readAsDataURL(blob);
-        
-    }
-*/
-
 })
 
 
@@ -197,98 +196,23 @@ Cloudant Attachments
 HTTP Transfers Using Form Data
     http://stackoverflow.com/questions/4007969/application-x-www-form-urlencoded-or-multipart-form-data
 
-Event Listeners
-    http://stackoverflow.com/questions/21556090/cordova-angularjs-device-ready
-
 FileReader object
     readAsDataURL: https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL 
 
-addEventListener
+Event Listeners
+    addEventListener: http://stackoverflow.com/questions/21556090/cordova-angularjs-device-ready
     useCapture: http://stackoverflow.com/questions/7398290/unable-to-understand-usecapture-attribute-in-addeventlistener
 
-
 */
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-// Old code for todo app
 /*
-    $scope.bms_update = function () {
-        BMSClient.initialize(bms_route, bms_guid);
-        var todoReq = new MFPRequest("/api/items", MFPRequest.GET);
-        funct = "TODO RETRIEVAL"
-        todoReq.send(
-            function(successMsg){
-                $scope.todos = JSON.parse(successMsg.responseText);
-                $scope.$apply();
-            },
-            $scope.bms_failure
-        );
-    };
-
-    $scope.bms_delete = function (IDtoDelete) {
-        BMSClient.initialize(bms_route, bms_guid);
-
-        var request = new MFPRequest("/api/Items/" + IDtoDelete, MFPRequest.DELETE);
-        func = "DELETE"
-        request.send(
-            function (success) {},
-            $scope.bms_failure
-        );
-    };
-
-    $scope.bms_deleteAndUpdate = function (todoID) {
-        BMSClient.initialize(cloudant_bms_route, cloudant_bms_guid);
-        // Show the action sheet
-        $ionicActionSheet.show({
-            buttons: [
-                { text: 'Yes' },
-                { text: 'No' }
-            ],
-            titleText: 'Are you sure you want to delete this item?',
-            buttonClicked: function (buttonIndex) {
-                if (buttonIndex == 0) {
-                    $scope.bms_delete(todoID);
-                    $scope.bms_update();
-                }
-                return true;
-            }
-        });
-    };
-
-    $scope.bms_upload = function() {
-        func = "UPLOAD";
-        BMSClient.initialize(bms_route, bms_guid);
-        var request = new MFPRequest("/api/items/", MFPRequest.POST);
-
-        var payload = {
-            "text": text_value,
-            "isDone": false,
-            "audio": ""
-        };
-
-        request.send(payload, function(){}, $scope.bms_failure);
-
-        $scope.bms_update();
-    };
-
-
-*/
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-/*      // This uses an MFPRequest to upload directly to the database. Using the API seems to be better.
+    // This uses an MFPRequest to upload directly to the database. Using the API seems to be better.
 
         var requester = new MFPRequest(requesterURL, MFPRequest.GET);   // Ping the server to get the current database revision
         requester.send(

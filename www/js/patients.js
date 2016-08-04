@@ -1,3 +1,8 @@
+/*
+  This code is a slightly modified version of a todo app
+*/
+
+
 angular.module('myApp.patients', ['ionic'])
 
 /**
@@ -141,9 +146,8 @@ angular.module('myApp.patients', ['ionic'])
   };
 
 
-  // Try to create the first patient, make sure to defer
-  // this by using $timeout so everything is initialized
-  // properly
+  // Try to create the first patient. Make sure to defer this by using $timeout
+  // so everything is initialized properly
   $timeout(function() {
     if($scope.patients.length == 0) {
       while(true) {

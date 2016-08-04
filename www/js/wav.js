@@ -1,6 +1,9 @@
 /*
     This file is a slimmed-down version of the demo code included in the AudioInput plugin.
     Collects the raw microphone data, encodes it into WAV format and then displays the resulting blob.
+    
+    Audio input plugin:
+        https://www.npmjs.com/package/cordova-plugin-audioinput
  */
 
 // Capture configuration object
@@ -60,8 +63,8 @@ function onAudioInputError(error) {
 var startCapture = function () {
     try {
         if (window.audioinput && !audioinput.isCapturing()) {
-            // Get the audio capture configuration from the UI elements
-            //
+            // Originally used to get the audio capture configuration from the UI elements.
+            // Now the configuration is hard-coded in the optimal(?) format for the Wheeze algorithm.
             captureCfg = {
                 sampleRate: 44100,
                 bufferSize: 16384,
@@ -69,10 +72,10 @@ var startCapture = function () {
                 format: "PCM_16BIT",
                 audioSourceType: 0
                 /*
-                    <option value="0">DEFAULT (Android/iOS)</option>
-                    <option value="5">CAMCORDER (Android/iOS)</option>
-                    <option value="7">VOICE_COMMUNICATION (Android/iOS)</option>
-                    <option value="1">MIC (Android)</option>
+                    0 = DEFAULT (Android/iOS)
+                    1 = MIC (Android)
+                    5 = CAMCORDER (Android/iOS)
+                    7 = VOICE_COMMUNICATION (Android/iOS)
                 */
             };
 
@@ -198,14 +201,3 @@ var onDeviceReady = function () {
 if (window.cordova) {
     document.addEventListener('deviceready', onDeviceReady, false);
 }
-
-
-/*
---------------------------------------------------------------
------------------ USEFUL LINKS FOR REFERENCE -----------------
---------------------------------------------------------------
-
-Audio input plugin:
-    https://www.npmjs.com/package/cordova-plugin-audioinput
-
-*/
